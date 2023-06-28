@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-deployment
+  labels:
+    app: django
+    app.kubernetes.io/name: django
+    app.kubernetes.io/instance: django-deploy
+    app.kubernetes.io/version: "1.0"
+spec:
+  selector:
+    matchLabels:
+      app: django
+  template:
+    metadata:
+      labels:
+        app: django
+        app.kubernetes.io/name: django
+        app.kubernetes.io/instance: django-pod
+        app.kubernetes.io/version: "1.0"
+    spec:
+      containers:
+      - name: django-app
+        image: django_app:v1.0
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: django-config-v1
+          
