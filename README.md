@@ -58,26 +58,33 @@ metadata:
     app.kubernetes.io/instance: django-config
     app.kubernetes.io/version: "1.0"
 data:
-  ALLOWED_HOSTS: Айпи вашего кластера, можно узнать командой `minikube ip`
+  ALLOWED_HOSTS: star-burger.test
   SECRET_KEY: Описание переменной находится ниже
   DATABASE_URL: postgres://test_k8s:OwOtBep9Frut@айпи и порт на которых запущена база данных/test_k8s
   DEBUG: Описание переменной находится ниже, важно, чтобы переменная находилась в одинарных ковычках, вроде: 'False'
 ```
 
-Наконец запускаем ряд команд:
+Запускаем ряд команд:
 
 ```shell-session
 kubernetes apply -f путь к только что созданному конфигурационному файлу.
-kubernetes apply -f ./kubernetes/django-deployment.yaml
-kubernetes apply -f ./kubernetes/django-service.yaml
+kubernetes apply -f ./kubernetes/deployments/django-deployment.yaml
+kubernetes apply -f ./kubernetes/services/django-service.yaml
+kubernetes apply -f ./kubernetes/ingress/django-ingress.yaml
 ```
 
-Финальный шаг, прописать команду:
-```shell-session
-minikube service -all
+Добавьте данный текст в etc/hosts:
+
+```
+[вывод команды minikube ip] star-burger.test
 ```
 
-После этого у вас откроется браузер, с вашим сайтом.
+После этого сайт будет доступен по адрессу star-burge.test
+
+Также, вы можете добавить автоматическое удаление истекших джанго сессий:
+```
+kubernetes apply -f ./kubernetes/cronjobs/django-clearsessions.yaml
+```
 
 ## Переменные окружения
 
