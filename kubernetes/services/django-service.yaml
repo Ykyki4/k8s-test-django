@@ -7,9 +7,9 @@ metadata:
     app.kubernetes.io/instance: django-service
     app.kubernetes.io/version: "1.0"
 spec:
-  type: NodePort
   selector:
-    app.kubernetes.io/name: django
+    app: django
   ports:
     - protocol: TCP
       port: 80
+      targetPort: 80

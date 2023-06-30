@@ -24,6 +24,7 @@ spec:
         image: django_app:v1.0
         ports:
         - containerPort: 80
+          protocol: TCP
         envFrom:
         - configMapRef:
             name: django-config-v1
