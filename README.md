@@ -21,6 +21,64 @@ $ docker-compose run web ./manage.py createsuperuser
 
 Для тонкой настройки Docker Compose используйте переменные окружения. Их названия отличаются от тех, что задаёт docker-образа, сделано это чтобы избежать конфликта имён. Внутри docker-compose.yaml настраиваются сразу несколько образов, у каждого свои переменные окружения, и поэтому их названия могут случайно пересечься. Чтобы не было конфликтов к названиям переменных окружения добавлены префиксы по названию сервиса. Список доступных переменных можно найти внутри файла [`docker-compose.yml`](./docker-compose.yml).
 
+## Как запустить проект в kubernetes
+
+Для начала, узнайте свой внешний айпи адрес. [Windows](https://support.microsoft.com/en-us/windows/find-your-ip-address-in-windows-f21a9bbc-c582-55cd-35e0-73431160a1b9) [Linux](https://www.ionos.com/digitalguide/hosting/technical-matters/get-linux-ip-address/#:~:text=If%20you%20enter%20the%20command,that%20are%20in%20your%20network.) [MacOs](https://www.wikihow.com/Find-Your-IP-Address-on-a-Mac), далее в одном каталоге с [`docker-compose.yml`](./docker-compose.yml) создайте файл `docker-compose.override.yaml` с данным содержимым:
+
+```yaml
+version: "3"
+
+services:
+  db:
+    ports:
+      - [ваш внешний айпи адрес]:[предпочитаемый порт]:5432
+```
+
+После этого запустит базу данных командой:
+
+```shell-session
+docker-compose up db
+```
+
+Следуя данному [видео](https://www.youtube.com/watch?v=q_nj340pkQo&list=PLg5SS_4L6LYvN1RqaVesof8KAf-02fJSi&index=1) запустите кластер, загрузите в кластер образ джанго данной командой:
+
+```shell-session
+minikube image build -t django_app:v1.0 ./backend_main_django/Dockerfile
+```
+
+Далее создайте файл с конфигурацей в формате .yaml для запуска сайта:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: django-config-v1
+  labels:
+    app.kubernetes.io/name: django
+    app.kubernetes.io/instance: django-config
+    app.kubernetes.io/version: "1.0"
+data:
+  ALLOWED_HOSTS: Айпи вашего кластера, можно узнать командой `minikube ip`
+  SECRET_KEY: Описание переменной находится ниже
+  DATABASE_URL: postgres://test_k8s:OwOtBep9Frut@айпи и порт на которых запущена база данных/test_k8s
+  DEBUG: Описание переменной находится ниже, важно, чтобы переменная находилась в одинарных ковычках, вроде: 'False'
+```
+
+Наконец запускаем ряд команд:
+
+```shell-session
+kubernetes apply -f путь к только что созданному конфигурационному файлу.
+kubernetes apply -f ./kubernetes/django-deployment.yaml
+kubernetes apply -f ./kubernetes/django-service.yaml
+```
+
+Финальный шаг, прописать команду:
+```shell-session
+minikube service -all
+```
+
+После этого у вас откроется браузер, с вашим сайтом.
+
 ## Переменные окружения
 
 Образ с Django считывает настройки из переменных окружения:
