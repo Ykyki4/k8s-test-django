@@ -67,10 +67,11 @@ data:
 Запускаем ряд команд:
 
 ```shell-session
-kubernetes apply -f путь к только что созданному конфигурационному файлу.
-kubernetes apply -f ./kubernetes/deployments/django-deployment.yaml
-kubernetes apply -f ./kubernetes/services/django-service.yaml
-kubernetes apply -f ./kubernetes/ingress/django-ingress.yaml
+minikube addons enable ingress
+kubectl apply -f путь к только что созданному конфигурационному файлу.
+kubectl apply -f ./kubernetes/deployments/django-deployment.yaml
+kubectl apply -f ./kubernetes/services/django-service.yaml
+kubectl apply -f ./kubernetes/ingress/django-ingress.yaml
 ```
 
 Добавьте данный текст в etc/hosts:
@@ -82,8 +83,37 @@ kubernetes apply -f ./kubernetes/ingress/django-ingress.yaml
 После этого сайт будет доступен по адрессу star-burge.test
 
 Также, вы можете добавить автоматическое удаление истекших джанго сессий:
+
+```shell-session
+kubectl apply -f ./kubernetes/cronjobs/django-clearsessions.yaml
 ```
-kubernetes apply -f ./kubernetes/cronjobs/django-clearsessions.yaml
+
+Для джанго миграций, пропишите команду:
+
+```shell-session
+kubectl apply -f ./kubernetes/jobs/django-migrate.yaml
+```
+
+Для создания джанго суперюзера, используйте:
+
+```shell-session
+kubectl exec -it [имя пода с джанго] -- python3 manage.py createsuperuser
+```
+
+Если вам неудобно разворачивать базу данных локально, вы можете перейти на helm.
+
+[Гайд](https://helm.sh/docs/intro/install/) как установить helm.
+
+Далее, нужно добавить postgres:
+
+```shell-session
+helm install postgres --set auth.username=[user name] --set auth.database=[database name] --set auth.password=[password] oci://registry-1.docker.io/bitnamicharts/postgresql
+```
+
+Чтобы подключиться к базе данных:
+
+```
+DATABASE_URL: postgres://[user name]:[password]@postgres-postgresql:5432/[database name]
 ```
 
 ## Переменные окружения
