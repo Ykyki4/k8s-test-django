@@ -85,7 +85,7 @@ kubectl apply -f ./kubernetes/ingress/django-ingress.yaml
 
 После этого сайт будет доступен по адрессу star-burge.test
 
-Если вы запускаете prod версию сайта, настройте нужный порт и тип сервиса внутри [django-service.yaml](./kubernetes/services/django-service)
+Если вы запускаете prod версию сайта, настройте нужный порт и тип сервиса внутри [django-service.yaml](./kubernetes/services/django-service.yaml)
 
 Также, вы можете добавить автоматическое удаление истекших джанго сессий:
 
