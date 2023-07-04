@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: django-app
-        image: django_app:v1.0
+        image: ykyki4/django-app:015de0f
         ports:
         - containerPort: 80
           protocol: TCP

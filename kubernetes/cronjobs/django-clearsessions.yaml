@@ -12,7 +12,7 @@ spec:
         spec:
           containers:
           - name: django-app
-            image: django_app:v1.0
+            image: ykyki4/django-app:015de0f
             imagePullPolicy: IfNotPresent
             command: ["python3", "manage.py", "clearsessions"]
             envFrom:

@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
       - name: django-app
-        image: django_app:v1.0
+        image: ykyki4/django-app:015de0f
         command: ["python3", "manage.py", "migrate", "--no-input"]
         envFrom:
             - configMapRef:
