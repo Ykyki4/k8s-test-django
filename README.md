@@ -4,6 +4,8 @@
 
 Внутри конейнера Django запускается с помощью Nginx Unit, не путать с Nginx. Сервер Nginx Unit выполняет сразу две функции: как веб-сервер он раздаёт файлы статики и медиа, а в роли сервера-приложений он запускает Python и Django. Таким образом Nginx Unit заменяет собой связку из двух сервисов Nginx и Gunicorn/uWSGI. [Подробнее про Nginx Unit](https://unit.nginx.org/).
 
+[Ссылка на работающую версию сайта](https://edu-adoring-jones.sirius-k8s.dvmn.org/).
+
 ## Как запустить dev-версию
 
 Запустите базу данных и сайт:
@@ -40,11 +42,7 @@ services:
 docker-compose up db
 ```
 
-Следуя данному [видео](https://www.youtube.com/watch?v=q_nj340pkQo&list=PLg5SS_4L6LYvN1RqaVesof8KAf-02fJSi&index=1) запустите кластер, загрузите в кластер образ джанго данной командой:
-
-```shell-session
-minikube image build -t django_app:v1.0 ./backend_main_django/Dockerfile
-```
+Следуя данному [видео](https://www.youtube.com/watch?v=q_nj340pkQo&list=PLg5SS_4L6LYvN1RqaVesof8KAf-02fJSi&index=1) запустите кластер.
 
 Далее создайте файл с конфигурацей в формате .yaml для запуска сайта:
 
@@ -71,6 +69,11 @@ minikube addons enable ingress
 kubectl apply -f путь к только что созданному конфигурационному файлу.
 kubectl apply -f ./kubernetes/deployments/django-deployment.yaml
 kubectl apply -f ./kubernetes/services/django-service.yaml
+```
+
+Если же вы запускаете сайт локально, добавьте ingress:
+
+```shell-session
 kubectl apply -f ./kubernetes/ingress/django-ingress.yaml
 ```
 
@@ -81,6 +84,8 @@ kubectl apply -f ./kubernetes/ingress/django-ingress.yaml
 ```
 
 После этого сайт будет доступен по адрессу star-burge.test
+
+Если вы запускаете prod версию сайта, настройте нужный порт и тип сервиса внутри [django-service.yaml](./kubernetes/services/django-service)
 
 Также, вы можете добавить автоматическое удаление истекших джанго сессий:
 
